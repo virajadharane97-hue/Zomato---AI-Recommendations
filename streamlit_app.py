@@ -7,6 +7,7 @@ Deployment: streamlit run streamlit_app.py
 """
 
 import sys
+import traceback
 from pathlib import Path
 
 # Add project root to Python path so 'src' module can be imported
@@ -42,5 +43,19 @@ if not groq_key:
     """)
     st.stop()
 
-# Now import and run the actual Streamlit app
-from src.ui.streamlit_app import *  # noqa: F401, F403
+# Import and run with comprehensive error handling
+try:
+    from src.ui.streamlit_app import *  # noqa: F401, F403
+except Exception as e:
+    import streamlit as st
+    st.error("## ❌ Application Error")
+    st.error(f"**Error type:** {type(e).__name__}")
+    st.error(f"**Message:** {str(e)}")
+    st.markdown("---")
+    st.markdown("### Full Traceback:")
+    st.code(traceback.format_exc())
+    st.markdown("---")
+    st.info("**Common fixes:**\n"
+            "- Check the deployment logs for details\n"
+            "- Ensure all dependencies are in requirements.txt\n"
+            "- Verify the GROQ_API_KEY is correctly set in Secrets")

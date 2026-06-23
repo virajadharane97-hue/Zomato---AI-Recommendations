@@ -1,61 +1,61 @@
-"""Streamlit entry point for Streamlit Cloud deployment.
-
-This file imports the actual Streamlit app from src/ui/streamlit_app.py
-after adding the project root to sys.path.
-
-Deployment: streamlit run streamlit_app.py
-"""
+"""Minimal Streamlit entry point for debugging deployment issues."""
 
 import sys
-import traceback
 from pathlib import Path
 
-# Add project root to Python path so 'src' module can be imported
+# Add project root to Python path
 project_root = Path(__file__).parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-# Check for required environment variables
+import streamlit as st
+
+# Show that the app is loading
+st.title("🍽️ Zomato AI Restaurant Recommender")
+st.info("⏳ App is initializing... Please wait.")
+
+# Check environment
 import os
-from dotenv import load_dotenv
-
-# Load .env file if it exists (for local development)
-load_dotenv()
-
-# Verify GROQ_API_KEY is set
 groq_key = os.getenv("GROQ_API_KEY", "")
-if not groq_key:
-    import streamlit as st
-    st.error("""
-    ## ⚠️ Missing GROQ_API_KEY
-    
-    This app requires a Groq API key to function.
-    
-    **To fix this:**
-    1. Get a free API key from: https://console.groq.com/keys
-    2. Add it to Streamlit Cloud:
-       - Go to your app settings
-       - Navigate to **Secrets**
-       - Add: `GROQ_API_KEY = \"your_key_here\"`
-    3. Redeploy the app
-    
-    [Get your Groq API key →](https://console.groq.com/keys)
-    """)
-    st.stop()
 
-# Import and run with comprehensive error handling
+st.sidebar.header("Environment Check")
+st.sidebar.success(f"✅ Python path configured")
+st.sidebar.success(f"✅ Streamlit loaded")
+if groq_key:
+    st.sidebar.success(f"✅ GROQ_API_KEY found (length: {len(groq_key)})")
+else:
+    st.sidebar.error("❌ GROQ_API_KEY not found")
+    st.warning("""
+    **Missing GROQ_API_KEY!**
+    
+    Add it to Streamlit Secrets:
+    ```toml
+    GROQ_API_KEY = "your_key_here"
+    ```
+    """)
+
+# Now try to import the actual app
 try:
-    from src.ui.streamlit_app import *  # noqa: F401, F403
+    with st.spinner("Loading restaurant dataset and AI models..."):
+        # Import the main app module
+        from src.ui import streamlit_app as main_app
+        
+        # Call the main function
+        main_app.main()
+        
 except Exception as e:
-    import streamlit as st
-    st.error("## ❌ Application Error")
-    st.error(f"**Error type:** {type(e).__name__}")
-    st.error(f"**Message:** {str(e)}")
+    import traceback
+    
+    st.error(f"## ❌ Error Loading App")
+    st.error(f"**{type(e).__name__}:** {str(e)}")
+    
+    with st.expander("📋 Full Traceback (click to expand)"):
+        st.code(traceback.format_exc())
+    
     st.markdown("---")
-    st.markdown("### Full Traceback:")
-    st.code(traceback.format_exc())
-    st.markdown("---")
-    st.info("**Common fixes:**\n"
-            "- Check the deployment logs for details\n"
-            "- Ensure all dependencies are in requirements.txt\n"
-            "- Verify the GROQ_API_KEY is correctly set in Secrets")
+    st.info("""
+    **Next Steps:**
+    1. Check the deployment logs for details
+    2. Verify all dependencies are installed
+    3. Ensure GROQ_API_KEY is set in Streamlit Secrets
+    """)

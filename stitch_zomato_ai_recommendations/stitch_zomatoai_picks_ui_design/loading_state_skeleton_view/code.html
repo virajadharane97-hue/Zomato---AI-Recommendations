@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZomatoAI - Loading Recommendations</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#f3e0c6",
+                        "surface-tint": "#bb162c",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-fixed-dim": "#ffb3b1",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-container": "#db313f",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "tertiary-container": "#81725d",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "primary": "#b7122a",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#8f6f6e",
+                        "on-secondary-container": "#6b4500",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed": "#ffddb4",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#e4bebc",
+                        "inverse-on-surface": "#f1f1f1",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-surface": "#1a1c1c",
+                        "primary-fixed": "#ffdad8",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed-variant": "#92001c",
+                        "surface-bright": "#f9f9f9",
+                        "on-secondary-fixed": "#291800",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#685a46",
+                        "tertiary-fixed-dim": "#d6c4ab",
+                        "on-surface-variant": "#5b403f",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-primary": "#ffb3b1",
+                        "on-tertiary-fixed-variant": "#514532",
+                        "secondary-container": "#feae2c",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed-dim": "#ffb955",
+                        "on-primary-fixed": "#410007",
+                        "on-tertiary-fixed": "#241a0a",
+                        "on-secondary-fixed-variant": "#633f00",
+                        "secondary": "#835500",
+                        "surface-dim": "#dadada"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Inter"],
+                        "caption": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body": ["Inter"],
+                        "h1-mobile": ["Inter"],
+                        "label": ["Inter"],
+                        "h1": ["Inter"],
+                        "h2": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1-mobile": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "h1": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ai-shimmer {
+            background: linear-gradient(90deg, 
+                theme('colors.surface-container-high') 0%, 
+                theme('colors.surface-container-highest') 50%, 
+                theme('colors.surface-container-high') 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body text-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full h-16 z-50 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-margin-desktop max-w-container-max mx-auto left-0 right-0">
+<div class="font-h2 text-h2 font-bold text-primary dark:text-primary-fixed-dim flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+            ZomatoAI
+        </div>
+<nav class="hidden md:flex gap-lg h-full items-center">
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-label text-label hover:text-primary dark:hover:text-primary-fixed-dim transition-colors h-full flex items-center mt-0.5" href="#">Explore</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label text-label hover:text-primary dark:hover:text-primary-fixed-dim transition-colors h-full flex items-center" href="#">History</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label text-label hover:text-primary dark:hover:text-primary-fixed-dim transition-colors h-full flex items-center" href="#">Saved</a>
+</nav>
+<div class="flex items-center gap-sm">
+<button class="p-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:scale-95 transition-transform rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest cursor-pointer active:scale-95 transition-transform">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A small, professional portrait photograph of an individual used as a circular avatar profile picture, set against a clean, light mode neutral background with soft, flattering studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgnbl0Ai_eBK1FQlXo8U2yE5cueXYdK2ou--UWF51ogvPFZ6UVys2vLnjLJ-KS_EVf6k3Up9IUPjJm6wKmrhYROnS7Y1_z6T5F8F93nOI7dyIC9GXCfM9QQpUink-MbjicxTOmJJZZiF-3-077F0MoTiLM5my3SNwGZbtmqCuUDpE87Zt8eM1uZLJgzvIy3CTfdzr3Xg3ID1D4ySkTSurtNO81qYOQHgxPHmYDhJ7YvYVY1dnMdTmwDGHGuty812sz06M_6vCH_uI"/>
+</div>
+</div>
+</header>
+<div class="flex max-w-container-max mx-auto pt-16">
+<!-- SideNavBar -->
+<aside class="hidden md:flex fixed left-0 top-16 w-80 h-[calc(100vh-64px)] z-40 bg-surface-container-low dark:bg-surface-container-high border-r border-outline-variant flex-col p-md gap-sm overflow-y-auto">
+<div class="mb-lg px-sm">
+<h2 class="font-h3 text-h3 text-primary dark:text-primary-fixed-dim">AI Personalization</h2>
+<p class="font-body text-body text-on-surface-variant dark:text-surface-variant mt-1">Refine your palate</p>
+</div>
+<nav class="flex flex-col gap-xs flex-grow">
+<a class="bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg font-semibold flex items-center gap-md px-md py-3 active:scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label text-label">Home</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-highest hover:bg-surface-container-highest dark:hover:bg-surface-variant transition-all rounded-lg flex items-center gap-md px-md py-3 active:scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">local_fire_department</span>
+<span class="font-label text-label">Trending</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-highest hover:bg-surface-container-highest dark:hover:bg-surface-variant transition-all rounded-lg flex items-center gap-md px-md py-3 active:scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-label text-label">Preferences</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-highest hover:bg-surface-container-highest dark:hover:bg-surface-variant transition-all rounded-lg flex items-center gap-md px-md py-3 active:scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span class="font-label text-label">Collections</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-highest hover:bg-surface-container-highest dark:hover:bg-surface-variant transition-all rounded-lg flex items-center gap-md px-md py-3 mt-auto active:scale-[0.98] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label text-label">Help</span>
+</a>
+</nav>
+<button class="mt-md w-full py-3 bg-surface-container-high text-on-surface-variant rounded-lg font-label text-label flex justify-center items-center gap-2 opacity-70 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined animate-spin" style="font-size: 18px;">progress_activity</span>
+                Finding restaurants...
+            </button>
+</aside>
+<!-- Main Canvas (Loading State) -->
+<main class="w-full md:pl-80 p-margin-mobile md:p-margin-desktop min-h-[calc(100vh-64px)]">
+<div class="max-w-5xl mx-auto">
+<!-- AI Summary Skeleton Banner -->
+<div class="w-full bg-surface-container-low rounded-xl p-lg border border-outline-variant mb-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] relative overflow-hidden flex items-start gap-md">
+<div class="w-12 h-12 rounded-full ai-shimmer shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-container-lowest opacity-50">smart_toy</span>
+</div>
+<div class="flex-grow space-y-sm pt-xs">
+<div class="h-6 w-1/3 rounded ai-shimmer"></div>
+<div class="h-4 w-full rounded ai-shimmer"></div>
+<div class="h-4 w-5/6 rounded ai-shimmer"></div>
+<div class="h-4 w-2/3 rounded ai-shimmer"></div>
+</div>
+</div>
+<!-- Results Grid Skeletons -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Skeleton Card 1 -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full relative">
+<!-- Rank Badge Skeleton -->
+<div class="absolute top-sm left-sm w-8 h-8 rounded-full ai-shimmer z-10 shadow-sm border-2 border-surface"></div>
+<!-- Image Skeleton -->
+<div class="w-full aspect-[16/9] ai-shimmer"></div>
+<div class="p-md flex-grow flex flex-col gap-sm">
+<!-- Title Bar Skeleton -->
+<div class="flex justify-between items-start">
+<div class="h-6 w-3/4 rounded ai-shimmer"></div>
+<div class="h-6 w-12 rounded ai-shimmer"></div>
+</div>
+<!-- Tags Skeleton -->
+<div class="flex gap-xs mt-xs">
+<div class="h-6 w-16 rounded-full ai-shimmer"></div>
+<div class="h-6 w-20 rounded-full ai-shimmer"></div>
+<div class="h-6 w-14 rounded-full ai-shimmer"></div>
+</div>
+<!-- Spacer -->
+<div class="flex-grow"></div>
+<!-- AI Reasoning Block Skeleton -->
+<div class="mt-sm p-sm rounded-lg border-l-4 border-secondary-container ai-shimmer bg-opacity-30">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 rounded-full bg-surface-container-high opacity-50"></div>
+<div class="h-4 w-24 rounded bg-surface-container-high opacity-50"></div>
+</div>
+<div class="h-3 w-full rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-4/5 rounded bg-surface-container-high opacity-50"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 2 -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full relative">
+<div class="absolute top-sm left-sm w-8 h-8 rounded-full ai-shimmer z-10 shadow-sm border-2 border-surface" style="animation-delay: 0.1s;"></div>
+<div class="w-full aspect-[16/9] ai-shimmer" style="animation-delay: 0.1s;"></div>
+<div class="p-md flex-grow flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="h-6 w-2/3 rounded ai-shimmer" style="animation-delay: 0.1s;"></div>
+<div class="h-6 w-12 rounded ai-shimmer" style="animation-delay: 0.1s;"></div>
+</div>
+<div class="flex gap-xs mt-xs">
+<div class="h-6 w-24 rounded-full ai-shimmer" style="animation-delay: 0.1s;"></div>
+<div class="h-6 w-16 rounded-full ai-shimmer" style="animation-delay: 0.1s;"></div>
+</div>
+<div class="flex-grow"></div>
+<div class="mt-sm p-sm rounded-lg border-l-4 border-secondary-container ai-shimmer bg-opacity-30" style="animation-delay: 0.1s;">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 rounded-full bg-surface-container-high opacity-50"></div>
+<div class="h-4 w-20 rounded bg-surface-container-high opacity-50"></div>
+</div>
+<div class="h-3 w-full rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-full rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-1/2 rounded bg-surface-container-high opacity-50"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 3 -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full relative">
+<div class="absolute top-sm left-sm w-8 h-8 rounded-full ai-shimmer z-10 shadow-sm border-2 border-surface" style="animation-delay: 0.2s;"></div>
+<div class="w-full aspect-[16/9] ai-shimmer" style="animation-delay: 0.2s;"></div>
+<div class="p-md flex-grow flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="h-6 w-4/5 rounded ai-shimmer" style="animation-delay: 0.2s;"></div>
+<div class="h-6 w-12 rounded ai-shimmer" style="animation-delay: 0.2s;"></div>
+</div>
+<div class="flex gap-xs mt-xs">
+<div class="h-6 w-12 rounded-full ai-shimmer" style="animation-delay: 0.2s;"></div>
+<div class="h-6 w-20 rounded-full ai-shimmer" style="animation-delay: 0.2s;"></div>
+<div class="h-6 w-16 rounded-full ai-shimmer" style="animation-delay: 0.2s;"></div>
+</div>
+<div class="flex-grow"></div>
+<div class="mt-sm p-sm rounded-lg border-l-4 border-secondary-container ai-shimmer bg-opacity-30" style="animation-delay: 0.2s;">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 rounded-full bg-surface-container-high opacity-50"></div>
+<div class="h-4 w-28 rounded bg-surface-container-high opacity-50"></div>
+</div>
+<div class="h-3 w-11/12 rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-3/4 rounded bg-surface-container-high opacity-50"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 4 -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full relative">
+<div class="w-full aspect-[16/9] ai-shimmer" style="animation-delay: 0.3s;"></div>
+<div class="p-md flex-grow flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="h-6 w-3/4 rounded ai-shimmer" style="animation-delay: 0.3s;"></div>
+<div class="h-6 w-12 rounded ai-shimmer" style="animation-delay: 0.3s;"></div>
+</div>
+<div class="flex gap-xs mt-xs">
+<div class="h-6 w-16 rounded-full ai-shimmer" style="animation-delay: 0.3s;"></div>
+<div class="h-6 w-14 rounded-full ai-shimmer" style="animation-delay: 0.3s;"></div>
+</div>
+<div class="flex-grow"></div>
+<div class="mt-sm p-sm rounded-lg border-l-4 border-secondary-container ai-shimmer bg-opacity-30" style="animation-delay: 0.3s;">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 rounded-full bg-surface-container-high opacity-50"></div>
+<div class="h-4 w-24 rounded bg-surface-container-high opacity-50"></div>
+</div>
+<div class="h-3 w-full rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-2/3 rounded bg-surface-container-high opacity-50"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 5 -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full relative">
+<div class="w-full aspect-[16/9] ai-shimmer" style="animation-delay: 0.4s;"></div>
+<div class="p-md flex-grow flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="h-6 w-1/2 rounded ai-shimmer" style="animation-delay: 0.4s;"></div>
+<div class="h-6 w-12 rounded ai-shimmer" style="animation-delay: 0.4s;"></div>
+</div>
+<div class="flex gap-xs mt-xs">
+<div class="h-6 w-24 rounded-full ai-shimmer" style="animation-delay: 0.4s;"></div>
+<div class="h-6 w-20 rounded-full ai-shimmer" style="animation-delay: 0.4s;"></div>
+</div>
+<div class="flex-grow"></div>
+<div class="mt-sm p-sm rounded-lg border-l-4 border-secondary-container ai-shimmer bg-opacity-30" style="animation-delay: 0.4s;">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 rounded-full bg-surface-container-high opacity-50"></div>
+<div class="h-4 w-16 rounded bg-surface-container-high opacity-50"></div>
+</div>
+<div class="h-3 w-full rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-4/5 rounded bg-surface-container-high opacity-50"></div>
+</div>
+</div>
+</div>
+<!-- Skeleton Card 6 -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full relative">
+<div class="w-full aspect-[16/9] ai-shimmer" style="animation-delay: 0.5s;"></div>
+<div class="p-md flex-grow flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="h-6 w-2/3 rounded ai-shimmer" style="animation-delay: 0.5s;"></div>
+<div class="h-6 w-12 rounded ai-shimmer" style="animation-delay: 0.5s;"></div>
+</div>
+<div class="flex gap-xs mt-xs">
+<div class="h-6 w-16 rounded-full ai-shimmer" style="animation-delay: 0.5s;"></div>
+<div class="h-6 w-16 rounded-full ai-shimmer" style="animation-delay: 0.5s;"></div>
+<div class="h-6 w-16 rounded-full ai-shimmer" style="animation-delay: 0.5s;"></div>
+</div>
+<div class="flex-grow"></div>
+<div class="mt-sm p-sm rounded-lg border-l-4 border-secondary-container ai-shimmer bg-opacity-30" style="animation-delay: 0.5s;">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-4 h-4 rounded-full bg-surface-container-high opacity-50"></div>
+<div class="h-4 w-20 rounded bg-surface-container-high opacity-50"></div>
+</div>
+<div class="h-3 w-10/12 rounded bg-surface-container-high opacity-50 mb-1"></div>
+<div class="h-3 w-1/2 rounded bg-surface-container-high opacity-50"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

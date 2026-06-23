@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testAPI()">Test API Call</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...';
+            
+            try {
+                console.log('Fetching /api/v1/locations...');
+                const res = await fetch('/api/v1/locations');
+                console.log('Response status:', res.status);
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+                
+                const data = await res.json();
+                console.log('Locations data:', data);
+                output.textContent = `Success! Got ${data.count} locations:\n${data.locations.slice(0, 10).join(', ')}...`;
+            } catch (err) {
+                console.error('API test failed:', err);
+                output.textContent = `Error: ${err.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

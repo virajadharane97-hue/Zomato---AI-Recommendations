@@ -75,3 +75,4 @@ coverage.xml
 *.pdf
 *.docx
 docs/*.docx
+SCRIPT.md
